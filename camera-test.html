@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera Tester</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f0f4f8; }
+        #video { width: 100%; max-width: 500px; border-radius: 12px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .success { color: #059669; font-weight: bold; }
+        .error { color: #dc2626; font-weight: bold; padding: 20px; background: #fee2e2; border-radius: 8px; margin: 20px auto; max-width: 500px; }
+        button { padding: 12px 24px; font-size: 16px; background: #4f46e5; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Camera Access Tester</h1>
+    <p>Use this to check if your browser/OS allows camera access for this URL.</p>
+    
+    <div id="status">Click the button below to request camera permission.</div>
+    <br>
+    <video id="video" autoplay playsinline></video>
+    <br><br>
+    <button onclick="startCamera()">Test Camera</button>
+
+    <script>
+        async function startCamera() {
+            const status = document.getElementById('status');
+            const video = document.getElementById('video');
+            status.innerHTML = "Requesting permission...";
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                status.innerHTML = "<span class='success'>SUCCESS! Your camera is working and accessible.</span>";
+                console.log("Stream acquired:", stream);
+            } catch (err) {
+                console.error("Camera error:", err);
+                status.innerHTML = `<div class='error'>
+                    ERROR: ${err.name} - ${err.message}<br><br>
+                    Possible reasons:<br>
+                    1. No camera found.<br>
+                    2. Browser blocked access (Check the address bar).<br>
+                    3. Security Block: If you are using an IP address, the browser blocks cameras unless you use HTTPS or 'localhost'.
+                </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
